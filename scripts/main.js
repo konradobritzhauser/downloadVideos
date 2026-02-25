@@ -1,0 +1,45 @@
+const https = require('https');
+const fs = require('fs');
+
+// 1. YOUR SPECIFIC DATA
+let url;
+url="https://ssrweb.zoom.us/file?cid=aw1&data=af923f1e9a30a091bd1b94831612630d5681be3bc382f652712a0ffae71cfa82&fid=39ofghnwzY4iDLW0lPi5dn7WordsEJyhDBvjvtNOHoqgELSunfr6h1NeDqHtriWHnY_SEuzBBmMwqiQ.VY7UzI-7MNE_mnYf&mode=play&path=s3%3A%2F%2Fzoom-cmr-01%2Freplay02%2F2026%2F02%2F10%2FDB98F0BB-D950-450F-9E42-D4A1FFB4D053%2FGMT20260210-200248_Recording_avo_1280x720.mp4kms&response-cache-control=max-age%3D0%2Cs-maxage%3D86400&s001=yes&s002=OkW4vOSI5wPJgWJXc-ihcAtGS-cFMoThsEUgV8w1ZAY-qWjYMtdltY0EBaC0JgpeJYGF3Exk8o1GHhw6tNIJncGXScrF.Qk_SWhtR1tSkc_Kd&jwt=eyJ0eXAiOiJKV1QiLCJrIjoiL2xUY3E4SlMiLCJ6bV9za20iOiJ6bV9vMm0iLCJhbGciOiJFUzI1NiJ9.eyJhdWQiOiJmaWxlIiwiZGlnIjoiNjUzMzFiYTVmOGI3YWJjZGZiYzVjNzYwMzg0MGE1NDQ3ZjkzOGJhNjFiMmQyNmE5MWM1Y2JkNTE1NTZjMDk0YSIsImlzcyI6IndlYiIsImhkaWciOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZXhwIjoxNzcwNzY3Njg0LCJpYXQiOjE3NzA3NjA2NzB9.qJp9cTaH44hNqtvPkFPhlH_NqMcgAz6LakBTpkIHO_TISZQzsFvjWDXhXWCgGZEit_AcmzF6YdDO4_UlDw_PpQ&Policy=eyJTdGF0ZW1lbnQiOiBbeyJSZXNvdXJjZSI6Imh0dHBzOi8vc3Nyd2ViLnpvb20udXMvZmlsZT9jaWQ9YXcxJmRhdGE9YWY5MjNmMWU5YTMwYTA5MWJkMWI5NDgzMTYxMjYzMGQ1NjgxYmUzYmMzODJmNjUyNzEyYTBmZmFlNzFjZmE4MiZmaWQ9MzlvZmdobnd6WTRpRExXMGxQaTVkbjdXb3Jkc0VKeWhEQnZqdnROT0hvcWdFTFN1bmZyNmgxTmVEcUh0cmlXSG5ZX1NFdXpCQm1Nd3FpUS5WWTdVekktN01ORV9tbllmJm1vZGU9cGxheSZwYXRoPXMzJTNBJTJGJTJGem9vbS1jbXItMDElMkZyZXBsYXkwMiUyRjIwMjYlMkYwMiUyRjEwJTJGREI5OEYwQkItRDk1MC00NTBGLTlFNDItRDRBMUZGQjREMDUzJTJGR01UMjAyNjAyMTAtMjAwMjQ4X1JlY29yZGluZ19hdm9fMTI4MHg3MjAubXA0a21zJnJlc3BvbnNlLWNhY2hlLWNvbnRyb2w9bWF4LWFnZSUzRDAlMkNzLW1heGFnZSUzRDg2NDAwJnMwMDE9eWVzJnMwMDI9T2tXNHZPU0k1d1BKZ1dKWGMtaWhjQXRHUy1jRk1vVGhzRVVnVjh3MVpBWS1xV2pZTXRkbHRZMEVCYUMwSmdwZUpZR0YzRXhrOG8xR0hodzZ0TklKbmNHWFNjckYuUWtfU1dodFIxdFNrY19LZCZqd3Q9ZXlKMGVYQWlPaUpLVjFRaUxDSnJJam9pTDJ4VVkzRTRTbE1pTENKNmJWOXphMjBpT2lKNmJWOXZNbTBpTENKaGJHY2lPaUpGVXpJMU5pSjkuZXlKaGRXUWlPaUptYVd4bElpd2laR2xuSWpvaU5qVXpNekZpWVRWbU9HSTNZV0pqWkdaaVl6VmpOell3TXpnME1HRTFORFEzWmprek9HSmhOakZpTW1ReU5tRTVNV00xWTJKa05URTFOVFpqTURrMFlTSXNJbWx6Y3lJNkluZGxZaUlzSW1oa2FXY2lPaUpsTTJJd1l6UTBNams0Wm1NeFl6RTBPV0ZtWW1ZMFl6ZzVPVFptWWpreU5ESTNZV1UwTVdVME5qUTVZamt6TkdOaE5EazFPVGt4WWpjNE5USmlPRFUxSWl3aVpYaHdJam94Tnpjd056WTNOamcwTENKcFlYUWlPakUzTnpBM05qQTJOekI5LnFKcDljVGFINDRoTnF0dlBrRlBobEhfTnFNY2dBejZMYWtCVHBrSUhPX1RJU1pRenNGdmpXRFhoWFdDZ0daRWl0X0FjbXpGNllkRE80X1VsRHdfUHBRIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzcwNzY3Njg0fX19XX0_&Signature=Kw87vv3zTG0SVPG-RhS1aeKWOHIm4cDlWh05IEQGcl9-uPfE2JDUG~gw4Ym0mOEhArZqxYWAiqsN7LknyclpUJjtq2KGPUlHpIAl-MbOKh0Doi6mdnqMKlyeuHwSP31TYFji4OeIDmWKu6qTv3dt289CdBeS2ABWzhru-qaM8DkqOZAiXFRTER2C8FmnLeMauHjxIzGdIcZBZMcDVKyRBkEZXPXYclQs159l-c513Wb54uAM2Qipdu8Pmo0x-MEBil8GsciuxDfXcxA7jLQO1ls8fPIEkpby57Aej5H9C8brAU0szckAtAHAYRxB3ZKRbbuzEEIglpTyIX~sC8id1g__&Key-Pair-Id=K1YYCGW8V4AHXW"
+
+// url="https://ssrweb.zoom.us/file?cid=aw1&data=af923f1e9a30a091bd1b94831612630d5681be3bc382f652712a0ffae71cfa82&fid=NvYmczKoEcw0e3c8Q-at7yod7VWh-xjene1tkQYjj_s3AU1RBHhJ3Juwk2OYECeck86f88R_Z_EfSBgO.p2LlM6u8lWFsAUo8&mode=play&path=s3%3A%2F%2Fzoom-cmr-01%2Freplay02%2F2026%2F02%2F10%2FDB98F0BB-D950-450F-9E42-D4A1FFB4D053%2FGMT20260210-200248_Recording_as_1512x982.mp4kms&response-cache-control=max-age%3D0%2Cs-maxage%3D86400&s001=yes&s002=ob6bbwH3cWDpDOxbcgwC-cTojp7C6NOJpciOOFOLsf2DGZuwiaOgOLyE7ow61ZZ8Lw2EWGS23Q9RY3KfDU1oWZWJz-r4.xMIDwWFkKKCbmLzS&jwt=eyJ0eXAiOiJKV1QiLCJrIjoiL2xUY3E4SlMiLCJ6bV9za20iOiJ6bV9vMm0iLCJhbGciOiJFUzI1NiJ9.eyJhdWQiOiJmaWxlIiwiZGlnIjoiYmQ1NDM3NjAxYzBjYTNkNjFiY2M3YWUzYWU5ZmEwYmEwZTA3MDZkYzg5NGNhZjhhMTZkM2VjNTg1MTk5OGIyOSIsImlzcyI6IndlYiIsImhkaWciOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZXhwIjoxNzcwNzY3Njg0LCJpYXQiOjE3NzA3NjA2NzB9.IBNtcDJpf2565F8rOSCKDluPaZ-ymrn0S_122eQ0Cc5rmbqXs86YHVpTjSUI30qpamcon630AsEd9tSBGuL2IQ&Policy=eyJTdGF0ZW1lbnQiOiBbeyJSZXNvdXJjZSI6Imh0dHBzOi8vc3Nyd2ViLnpvb20udXMvZmlsZT9jaWQ9YXcxJmRhdGE9YWY5MjNmMWU5YTMwYTA5MWJkMWI5NDgzMTYxMjYzMGQ1NjgxYmUzYmMzODJmNjUyNzEyYTBmZmFlNzFjZmE4MiZmaWQ9TnZZbWN6S29FY3cwZTNjOFEtYXQ3eW9kN1ZXaC14amVuZTF0a1FZampfczNBVTFSQkhoSjNKdXdrMk9ZRUNlY2s4NmY4OFJfWl9FZlNCZ08ucDJMbE02dThsV0ZzQVVvOCZtb2RlPXBsYXkmcGF0aD1zMyUzQSUyRiUyRnpvb20tY21yLTAxJTJGcmVwbGF5MDIlMkYyMDI2JTJGMDIlMkYxMCUyRkRCOThGMEJCLUQ5NTAtNDUwRi05RTQyLUQ0QTFGRkI0RDA1MyUyRkdNVDIwMjYwMjEwLTIwMDI0OF9SZWNvcmRpbmdfYXNfMTUxMng5ODIubXA0a21zJnJlc3BvbnNlLWNhY2hlLWNvbnRyb2w9bWF4LWFnZSUzRDAlMkNzLW1heGFnZSUzRDg2NDAwJnMwMDE9eWVzJnMwMDI9b2I2YmJ3SDNjV0RwRE94YmNnd0MtY1RvanA3QzZOT0pwY2lPT0ZPTHNmMkRHWnV3aWFPZ09MeUU3b3c2MVpaOEx3MkVXR1MyM1E5UlkzS2ZEVTFvV1pXSnotcjQueE1JRHdXRmtLS0NibUx6UyZqd3Q9ZXlKMGVYQWlPaUpLVjFRaUxDSnJJam9pTDJ4VVkzRTRTbE1pTENKNmJWOXphMjBpT2lKNmJWOXZNbTBpTENKaGJHY2lPaUpGVXpJMU5pSjkuZXlKaGRXUWlPaUptYVd4bElpd2laR2xuSWpvaVltUTFORE0zTmpBeFl6QmpZVE5rTmpGaVkyTTNZV1V6WVdVNVptRXdZbUV3WlRBM01EWmtZemc1TkdOaFpqaGhNVFprTTJWak5UZzFNVGs1T0dJeU9TSXNJbWx6Y3lJNkluZGxZaUlzSW1oa2FXY2lPaUpsTTJJd1l6UTBNams0Wm1NeFl6RTBPV0ZtWW1ZMFl6ZzVPVFptWWpreU5ESTNZV1UwTVdVME5qUTVZamt6TkdOaE5EazFPVGt4WWpjNE5USmlPRFUxSWl3aVpYaHdJam94Tnpjd056WTNOamcwTENKcFlYUWlPakUzTnpBM05qQTJOekI5LklCTnRjREpwZjI1NjVGOHJPU0NLRGx1UGFaLXltcm4wU18xMjJlUTBDYzVybWJxWHM4NllIVnBUalNVSTMwcXBhbWNvbjYzMEFzRWQ5dFNCR3VMMklRIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzcwNzY3Njg0fX19XX0_&Signature=DMIKc2Y0GuMmlZqCJTzv~hDc6KGsRqzZD2xCtvsoSn9K7dQbS5nlN1z8eamTz49zpNax~hm-jOrK3gxLBNjyJpY~KuuDcPEdvN7uk-JDhm7Xpwlg-etGH84sVHUfHexvpzd17zBfqPcRp7wbJl~l~9Bdw2YU6MINkJsaBGBVMt5-bkqEWTHiga0h7AM~rrP-TqP6hXkSEY2P7C1IFFNDchFz4RS5bzzM2CAo6RSoOAPKDtbZ7e4OytXYWS5~QtCJ7qVaEb4IBawigxRnm9QHPuQCwFK14MadljFHjNkNNZXe6JYC4q4VZRFtRVZV3ixwSrimAS8vQZJi0wkh4TUS1A__&Key-Pair-Id=K1YYCGW8V4AHXW"
+const headers = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',
+    'Referer': 'https://zoom.us/',
+    'Cookie': '_zm_mtk_guid=b0fd20f1ed3f4476b724b75827ac774a; _zm_ssid=aw1_c_cxyuJgBcRcyDok_TXEJscQ; zm_haid=181; zm_web_domain=zoom.us; zm_cluster=aw1;' // Simplified for brevity, add yours if it fails
+};
+
+// 2. THE DOWNLOAD LOGIC
+const file = fs.createWriteStream("zoom_recording_voice.mp4");
+
+console.log("Connecting to Zoom servers...");
+
+https.get(url, { headers }, (response) => {
+    const { statusCode } = response;
+
+    if (statusCode !== 200) {
+        console.error(`Download failed! Status Code: ${statusCode}`);
+        return;
+    }
+
+    const totalSize = parseInt(response.headers['content-length'], 10);
+    let downloadedSize = 0;
+
+    response.on('data', (chunk) => {
+        downloadedSize += chunk.length;
+        const percentage = ((downloadedSize / totalSize) * 100).toFixed(2);
+        process.stdout.write(`\rDownloading: ${percentage}% (${(downloadedSize / 1024 / 1024).toFixed(2)} MB)`);
+    });
+
+    response.pipe(file);
+
+    file.on('finish', () => {
+        file.close();
+        console.log("\nDownload Complete: zoom_recording.mp4");
+    });
+}).on('error', (err) => {
+    console.error("Error: ", err.message);
+});
