@@ -1,3 +1,5 @@
+//Status: it works with a single file
+
 const fs = require('fs');
 const { spawn } = require('child_process');
 const ffmpegPath = require("ffmpeg-static");
@@ -5,14 +7,23 @@ const ffmpegPath = require("ffmpeg-static");
 //obtain m3u8 url and headers to do this
 
 // --- CONFIGURATION ---
-const M3U8_URL = "https://okqtss1gbbnca8e.harbortraildesignstudio.cyou/jxnu44rmvdct/hls3/01/02327/it743bpdj1je_,n,h,.urlset/index-f2-v1-a1.txt";
+const M3U8_URL = "https://cdn-992jsdmdmsldvz5t.edgeon-bandwidth.com/engine/hls2/01/09927/m6ldsc0xnykf_,n,.urlset/index-v1-a1.m3u8?t=_FOCZchARJgU1FdCiqhy8YuinrsxZw8txpml2NVuU4s&s=1771982531&e=14400&f=49635356&node=W0ccubUK3UhzYApjfynV/zE/oC0jZ2F0YlJ3fOIjreo=&i=184.144&sp=2500&asn=577&q=n&rq=LI9qaysGXw7SB1cWt2BjOwih5o5cKzqOazPhEbGW";
 const headersObj = {
-   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',
-    'Referer': 'https://yuguaab.com/', // This MUST match the site you're watching on
-    'Origin': 'https://yuguaab.com',
-    'Accept': '*/*'
-  };
-const OUTPUT_NAME = 'Death Note (2006) - S01E22-2.mp4';
+    'accept': '*/*',
+    'accept-language': 'en-US,en;q=0.9,fr-CA;q=0.8,fr;q=0.7,es;q=0.6,la;q=0.5',
+    'priority': 'u=1, i',
+    'referer': 'https://audinifer.com/e/bvby04hvbxjn',
+    'sec-ch-ua': '"Not:A-Brand";v="99", "Google Chrome";v="145", "Chromium";v="145"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"Windows"',
+    'sec-fetch-dest': 'empty',
+    'sec-fetch-mode': 'cors',
+    'sec-fetch-site': 'same-origin',
+    'sec-fetch-storage-access': 'active',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36',
+    'cookie': '_ym_uid=1771977766548088472; _ym_d=1771977766; _ym_isad=1; _ym_visorc=b'
+};
+const OUTPUT_NAME = 'Death Note (2006) - S01E34.mp4';
 
 async function downloadSegmentedStream() {
     try {

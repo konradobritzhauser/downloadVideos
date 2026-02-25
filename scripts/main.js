@@ -1,3 +1,6 @@
+//Status: it works with a single file
+
+
 const https = require('https');
 const fs = require('fs');
 

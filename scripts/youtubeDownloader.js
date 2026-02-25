@@ -1,3 +1,5 @@
+//status: it works with a single file
+
 const ytDl = require('youtube-dl-exec');
 const ffmpegPath = require('ffmpeg-static');
 
