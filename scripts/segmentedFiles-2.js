@@ -5,21 +5,50 @@ const axios = require('axios');
 const ffmpegPath = require('ffmpeg-static'); // Uses local node_modules binary
 
 // --- CONFIGURATION ---
-const STREAM_URL = 'https://s13.vimeos.net/hls2/02/00009/e663e8i0orde_h/index-v1-a1.m3u8?t=bFXJORASAt_L8bMG1ye9J2Nl9IchnS594IzJRgJWeWc&s=1785021305&e=43200&v=302711992&i=0.3&sp=0&fr=e663e8i0orde&r=e';
-const OUTPUT_FILE = 'The Great Gatsby (2013).mp4';
+const STREAM_URL = 'https://filelions.top/stream/hooAahGqJ88UYiOdUH4T7g/hjkrhuihghfvu/1785083213/6100859/index-f3-v1-a1.m3u8';
+const OUTPUT_DIR = path.join(__dirname, '..', 'output');
+const OUTPUT_FILE = path.join(OUTPUT_DIR, 'The Boondocks (s01e01).mp4');
 const TEMP_DIR = path.join(__dirname, 'temp_segments');
 
 const headersObj = {
-    "Accept": "*/*",
-    "Accept-Language": "en-US,en;q=0.9",
-    "Origin": "https://vimeos.net",
-    "Referer": "https://vimeos.net/",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36"
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.8",
+    "priority": "u=1, i",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Brave\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "sec-fetch-storage-access": "none",
+    "sec-gpc": "1",
+    "cookie": "tsn=43",
+    "Referer": "https://filelions.top/v/ens5a33g7y4m"
 };
 
 // Helper utilities for delays and jitter
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const getRandomDelay = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+/**
+ * Filelions/VidHide disguise MPEG-TS as PNG: a 1x1 PNG header, then raw TS bytes.
+ * Players strip the PNG; without that step, players/ffmpeg see an "image" and no video.
+ */
+function unwrapDisguisedSegment(filePath) {
+    const data = fs.readFileSync(filePath);
+    if (data.length < 8 || data[0] !== 0x89 || data.toString('ascii', 1, 4) !== 'PNG') {
+        return false;
+    }
+    const iend = data.indexOf(Buffer.from('IEND'));
+    if (iend === -1) return false;
+    const payload = data.subarray(iend + 8); // IEND chunk type + CRC
+    if (payload.length === 0 || payload[0] !== 0x47) {
+        // 0x47 = MPEG-TS sync; if missing, leave file alone
+        return false;
+    }
+    fs.writeFileSync(filePath, payload);
+    return true;
+}
 
 // Pre-check for local FFmpeg binary
 function checkFFmpeg() {
@@ -38,6 +67,10 @@ async function downloadHLSStream() {
         fs.mkdirSync(TEMP_DIR, { recursive: true });
     }
 
+    if (!fs.existsSync(OUTPUT_DIR)) {
+        fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+    }
+
     console.log('[START] Fetching m3u8 playlist...');
     let playlistResponse;
     try {
@@ -48,6 +81,7 @@ async function downloadHLSStream() {
     }
 
     const playlistContent = playlistResponse.data;
+    console.log("playlistContent", playlistContent);
     const lines = playlistContent.split('\n');
     const segments = [];
     const baseUrl = STREAM_URL.substring(0, STREAM_URL.lastIndexOf('/') + 1);
@@ -71,6 +105,7 @@ async function downloadHLSStream() {
 
         // Resume Capability: Check if segment already exists and is non-empty
         if (fs.existsSync(segPath) && fs.statSync(segPath).size > 0) {
+            unwrapDisguisedSegment(segPath); // in case a prior run left PNG-wrapped files
             process.stdout.write(`\r[SKIP] Segment ${i + 1} of ${segments.length} (Already downloaded)`);
             downloadedFiles.push(segPath);
             continue;
@@ -103,6 +138,7 @@ async function downloadHLSStream() {
 
                 // Verify file actually saved correctly
                 if (fs.existsSync(segPath) && fs.statSync(segPath).size > 0) {
+                    unwrapDisguisedSegment(segPath);
                     downloadedFiles.push(segPath);
                     success = true;
                 } else {
