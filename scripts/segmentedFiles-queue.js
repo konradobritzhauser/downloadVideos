@@ -8,15 +8,19 @@ const ffmpegPath = require("ffmpeg-static");
 const CONCURRENCY_LIMIT = 2; // Adjust this to change how many download at once
 
 const downloadList = [
-    { name: 'Death Note - S01E34.mp4', hlsLink: 'https://storage.googleapis.com/mediastorage/1771981631651/f1yu1l774wg/342548191.mp4' },
+    { name: 'The Great Gatsby (2013)', hlsLink: 'https://s13.vimeos.net/hls2/02/00009/e663e8i0orde_h/index-v1-a1.m3u8?t=bFXJORASAt_L8bMG1ye9J2Nl9IchnS594IzJRgJWeWc&s=1785021305&e=43200&v=302711992&i=0.3&sp=0&fr=e663e8i0orde&r=e' },
 ];
 
 const headersObj = {
-    "range": "bytes=13402112-",
-    "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+   "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "sec-ch-ua": "\"Not;A=Brand\";v=\"8\", \"Chromium\";v=\"150\", \"Brave\";v=\"150\"",
     "sec-ch-ua-mobile": "?0",
     "sec-ch-ua-platform": "\"Windows\"",
-    "Referer": "https://player-cdn.com/"
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "sec-gpc": "1"
 };
 
 /**

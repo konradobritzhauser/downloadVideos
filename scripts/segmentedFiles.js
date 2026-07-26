@@ -7,23 +7,19 @@ const ffmpegPath = require("ffmpeg-static");
 //obtain m3u8 url and headers to do this
 
 // --- CONFIGURATION ---
-const M3U8_URL = "https://cdn-992jsdmdmsldvz5t.edgeon-bandwidth.com/engine/hls2/01/09927/m6ldsc0xnykf_,n,.urlset/index-v1-a1.m3u8?t=_FOCZchARJgU1FdCiqhy8YuinrsxZw8txpml2NVuU4s&s=1771982531&e=14400&f=49635356&node=W0ccubUK3UhzYApjfynV/zE/oC0jZ2F0YlJ3fOIjreo=&i=184.144&sp=2500&asn=577&q=n&rq=LI9qaysGXw7SB1cWt2BjOwih5o5cKzqOazPhEbGW";
+const M3U8_URL = "https://s13.vimeos.net/hls2/02/00009/e663e8i0orde_h/index-v1-a1.m3u8?t=bFXJORASAt_L8bMG1ye9J2Nl9IchnS594IzJRgJWeWc&s=1785021305&e=43200&v=302711992&i=0.3&sp=0&fr=e663e8i0orde&r=e";
 const headersObj = {
-    'accept': '*/*',
-    'accept-language': 'en-US,en;q=0.9,fr-CA;q=0.8,fr;q=0.7,es;q=0.6,la;q=0.5',
-    'priority': 'u=1, i',
-    'referer': 'https://audinifer.com/e/bvby04hvbxjn',
-    'sec-ch-ua': '"Not:A-Brand";v="99", "Google Chrome";v="145", "Chromium";v="145"',
-    'sec-ch-ua-mobile': '?0',
-    'sec-ch-ua-platform': '"Windows"',
-    'sec-fetch-dest': 'empty',
-    'sec-fetch-mode': 'cors',
-    'sec-fetch-site': 'same-origin',
-    'sec-fetch-storage-access': 'active',
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36',
-    'cookie': '_ym_uid=1771977766548088472; _ym_d=1771977766; _ym_isad=1; _ym_visorc=b'
-};
-const OUTPUT_NAME = 'Death Note (2006) - S01E34.mp4';
+    "accept": "*/*",
+    "accept-language": "en-US,en;q=0.9",
+    "sec-ch-ua": "\"Not;A=Brand\";v=\"8\", \"Chromium\";v=\"150\", \"Brave\";v=\"150\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "sec-gpc": "1"
+  };
+const OUTPUT_NAME = 'The Great Gatsby (2013).mp4';
 
 async function downloadSegmentedStream() {
     try {
